@@ -1,11 +1,16 @@
 const http = require('http');
 const express = require('express');
+const dotenv = require('dotenv');
+
+dotenv.config();
 
 const app = express();
 
-const usersRoute = require('./routes/users');
+const usersRoute = require('./api/routes/users');
+const surveysRoute = require('./api/routes/surveys');
 
 app.use('/api/users', usersRoute);
+app.use('/api/surveys', surveysRoute);
 
 app.use((err, req, res, next) => {
   res.send({
