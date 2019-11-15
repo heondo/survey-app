@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "webpack-dev-server",
     "build": "webpack --mode=production",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "watch": "nodemon src/server/index.js"
   },
   "husky": {
     "hooks": {
@@ -19,8 +20,12 @@
     ]
   },
   "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "express": "^4.17.1",
     "immutability-helper": "^3.0.1",
     "lodash": "^4.17.15",
+    "moment": "^2.24.0",
+    "nodemon": "^1.19.4",
     "react": "16.8.6",
     "react-dom": "16.8.6",
     "react-router-dom": "^5.1.2"
@@ -78,15 +83,6 @@
       "curly": [
         "error",
         "multi-line"
-      ],
-      "no-console": [
-        "error",
-        {
-          "allow": [
-            "warn",
-            "error"
-          ]
-        }
       ],
       "space-before-function-paren": [
         "error",

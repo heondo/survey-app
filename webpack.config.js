@@ -7,7 +7,7 @@ module.exports = {
   resolve: {
     extensions: ['.js', '.jsx']
   },
-  entry: './src',
+  entry: srcPath,
   output: {
     path: publicPath
   },
