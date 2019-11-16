@@ -1,5 +1,6 @@
 import React from 'react';
-import { Container, makeStyles, Input } from '@material-ui/core';
+import { Container, Button } from '@material-ui/core';
+import { Link } from 'react-router-dom';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as yup from 'yup';
 import styled from 'styled-components';
@@ -29,6 +30,7 @@ const InputField = styled(Field)`
 const ErrorLabel = styled(ErrorMessage)`
   font-size: .8rem;
   position: absolute;
+  margin-top: 3px;
 `;
 
 const FormGroup = styled(Form)`
@@ -45,12 +47,50 @@ const ErrorInputContainer = styled.div`
   margin-bottom: 1.5rem;
 `;
 
+const LoginButtonContainer = styled(ErrorInputContainer)`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const LoginButton = styled(Button)`
+  background-color: darkgrey;
+`;
+
+const SignupOption = styled(Link)`
+  font-size: .8rem;
+  color: black;
+  font-style: italic;
+  text-decoration: underline;
+`;
+
 const validationSchema = yup.object().shape({
   email: yup.string().email('Invalid Email').required('Required'),
-  password: yup.string().required()
+  password: yup.string().required("Can't login without a password")
 });
 
 export default function Login(props) {
+  const { setUserInfo } = props;
+
+  const handleLogin = values => {
+    // send someting to the backend
+    fetch('/api/users/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(values)
+    })
+      .then(res => res.json())
+      .then(res => {
+        if (res.error) {
+          throw new Error(res.error);
+        }
+        window.localStorage.setItem('token', res.token);
+        setUserInfo(res.userInfo);
+        // now you have the token back
+      })
+      .catch(err => console.error(err));
+  };
+
   return (
     <Container position="relative">
       <HeaderContainer>
@@ -69,6 +109,7 @@ export default function Login(props) {
           email: '',
           password: ''
         }}
+        onSubmit={handleLogin}
         validationSchema={validationSchema}
       >
         {props => (
@@ -87,12 +128,21 @@ export default function Login(props) {
               <InputField
                 id="password"
                 label="password"
+                type="password"
                 placeholder="*********"
                 name="password"
                 value={props.values.password}
               />
               <ErrorLabel name="password" component="div" />
             </ErrorInputContainer>
+            <LoginButtonContainer>
+              <LoginButton type="submit" variant="contained">
+                LOG IN
+              </LoginButton>
+              <SignupOption to="/signup">
+                No account? Register here
+              </SignupOption>
+            </LoginButtonContainer>
           </FormGroup>
         )}
       </Formik>

@@ -13,7 +13,7 @@ router.post('/login', (req, res, next) => {
   const { email, password } = req.body;
   const findUserQuery = {
     name: 'find-user',
-    text: 'SELECT id, email, password, deleted FROM users WHERE email=$1',
+    text: 'SELECT id, first, last, email, password, deleted FROM users WHERE email=$1',
     values: [email]
   };
   client.query(findUserQuery, (err, data) => {
@@ -41,15 +41,21 @@ router.post('/login', (req, res, next) => {
         });
       }
       // passwords match so now
+      const { id, first, last, email } = data.rows[0];
       const token = jwt.sign({
-        email: data.rows[0].email,
-        userID: data.rows[0].id
+        email: email,
+        userID: id
       }, process.env.JWT_KEY,
       {
         expiresIn: '6h'
       });
       res.status(200).json({
         success: true,
+        userInfo: {
+          id,
+          first,
+          last
+        },
         token
       });
     });
