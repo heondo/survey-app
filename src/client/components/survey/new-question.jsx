@@ -15,14 +15,15 @@ export default function NewQuestion(props) {
     <Formik
       initialValues={{
         questionName: '',
-        questionType: 'mult-choice'
+        questionType: 'mult-choice',
+        numOptions: 1
       }}
       validationSchema={validationSchema}
     >
-      {innerProps => {
-        const { values } = innerProps;
+      {({ values, handleChange }) => {
         return (
           <FormGroup onChange={e => {
+            console.log(values); // values do not represent the values one screen
             handleQuestionFieldChange(index, values);
           }}>
             <QuestionLabel name="questionName">{index + 1}. </QuestionLabel >
@@ -31,16 +32,32 @@ export default function NewQuestion(props) {
               placeholder="ex: How satisfied were you with your experience?"
             />
             <QuestionTypes>
-              <input type="radio" name="questionType" value="mult-choice" checked={values.questionType === 'mult-choice'}/> Multiple Choice
-              <input type="radio" name="questionType" value="free-text"/> Free Text
-              <input type="radio" name="questionType" value="other"/>
+              <input type="radio" name="questionType" value="mult-choice" checked={values.questionType === 'mult-choice'} onChange={handleChange}/> Multiple Choice
+              <input type="radio" name="questionType" value="free-text" checked={values.questionType === 'free-text'} onChange={handleChange}/> Free Text
             </QuestionTypes>
+            <OptionsContainer>
+              {values.questionType === 'mult-choice' ? (
+                <Field
+                  name="numOptions"
+                  type="number"
+                  placeholder="1-5"
+                />
+              ) : (
+                <div>
+                  Free text
+                </div>
+              )}
+            </OptionsContainer>
           </FormGroup>
         );
       }}
     </Formik>
   );
 }
+
+const OptionsContainer = styled.span`
+
+`;
 
 const QuestionTypes = styled.div`
   margin-top: .5rem;

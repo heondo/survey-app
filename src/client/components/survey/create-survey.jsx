@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Container, TextField, Box } from '@material-ui/core';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import update from 'immutability-helper';
@@ -16,6 +16,9 @@ const validationSchema = yup.object().shape({
 
 export default function CreateSurvey(props) {
   const [questions, setQuestions] = useState([{}]);
+
+  useEffect(() => {
+  }, [questions]);
 
   const addNewQuestion = () => {
     setQuestions(update(questions, { $push: [{}] }));

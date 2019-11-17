@@ -14,8 +14,7 @@ const useStyles = makeStyles(theme => ({
   homeLink: {
     textDecoration: 'none',
     color: 'black'
-  },
-  random: theme.mixins.toolbar
+  }
 }));
 
 export default function NavigationBar(props) {
