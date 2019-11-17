@@ -11,7 +11,7 @@ import styled from 'styled-components';
 // import { Formik, Form, Field, ErrorMessage } from 'formik';
 
 const validationSchema = yup.object().shape({
-  surveyName: yup.string().required('Survey name required')
+  surveyName: yup.string().required('* Survey name required')
 });
 
 export default function CreateSurvey(props) {
@@ -37,7 +37,7 @@ export default function CreateSurvey(props) {
         validationSchema={validationSchema}
       >
         {props => (
-          <Form>
+          <FormGroup>
             <label htmlFor="surveyName">Survey Name</label>
             <InputField
               id="surveyName"
@@ -45,8 +45,8 @@ export default function CreateSurvey(props) {
               placeholder="My very own survey"
             >
             </InputField>
-            <ErrorLabel name="surveyName" />
-          </Form>
+            <ErrorLabel name="surveyName" component="div"/>
+          </FormGroup>
         )}
       </Formik>
       {
@@ -71,10 +71,15 @@ export default function CreateSurvey(props) {
   );
 }
 
+const FormGroup = styled(Form)`
+  position: relative;
+`;
+
 const InputField = styled(Field)`
   width: 100%;
   font-size: 1rem;
   height: 2.5rem;
+  padding: .2rem;
   margin-bottom: 1rem;
   border: none;
   border-bottom: 1px solid black;
@@ -83,7 +88,8 @@ const InputField = styled(Field)`
 const ErrorLabel = styled(ErrorMessage)`
   font-size: .8rem;
   position: absolute;
-  margin-top: 3px;
+  bottom: 0;
+  color: red;
 `;
 
 const AddQuestion = styled.div`
