@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Container, TextField, Box } from '@material-ui/core';
-import { Formik, Form, Field, ErrorMessage } from 'formik';
-import update from 'immutability-helper';
+import { Formik, Form, Field, ErrorMessage, FieldArray } from 'formik';
 import NewQuestion from './new-question';
 
 import * as yup from 'yup';
@@ -11,65 +10,77 @@ import styled from 'styled-components';
 // import { Formik, Form, Field, ErrorMessage } from 'formik';
 
 const validationSchema = yup.object().shape({
-  surveyName: yup.string().required('* Survey name required')
+  surveyName: yup.string().required('* Survey name required'),
+  questions: yup.array().of(yup.object().shape({
+    questionName: yup.string().required('Must specify the question name')
+  }))
 });
 
 export default function CreateSurvey(props) {
-  const [questions, setQuestions] = useState([{}]);
-
-  useEffect(() => {
-  }, [questions]);
-
-  const addNewQuestion = () => {
-    setQuestions(update(questions, { $push: [{}] }));
-  };
-
-  const handleQuestionFieldChange = (index, questionFields) => {
-    setQuestions(update(questions, {
-      [index]: { $set: questionFields }
-    }));
-  };
 
   return (
     <Container>
       <h2>Create Survey</h2>
       <Formik
         initialValues={{
-          surveyName: ''
+          surveyName: '',
+          questions: []
         }}
         validationSchema={validationSchema}
       >
-        {props => (
+        {({ values }) => (
           <FormGroup>
-            <label htmlFor="surveyName">Survey Name</label>
-            <InputField
-              id="surveyName"
-              name="surveyName"
-              placeholder="My very own survey"
-            >
-            </InputField>
-            <ErrorLabel name="surveyName" component="div"/>
+            <FieldArray
+              name="questions"
+              render={arrayHelpers => (
+                <div>
+                  <label
+                    htmlFor="surveyName">
+                    Survey Name
+                  </label>
+                  <InputField
+                    id="surveyName"
+                    name="surveyName"
+                    placeholder="My very own survey"
+                  >
+                  </InputField>
+                  <ErrorLabel
+                    name="surveyName"
+                    component="div" />
+                  {
+                    values.questions.length
+                      ? values.questions.map((q, i) => (
+                        <NewQuestion key={i} index={i} arrayHelpers={arrayHelpers} question={values.questions[i]}/>
+                      )) : (
+                        <NoQuestions>You have no questions</NoQuestions>
+                      )
+                  }
+                  <AddQuestion>
+                    <SubHeader>
+                      New Question
+                    </SubHeader>
+                    <div>
+                      <AddCircleIcon
+                        fontSize="large"
+                        style={{ margin: 'auto' }}
+                        onClick={() => {
+                          arrayHelpers.push({
+                            questionName: '',
+                            questionType: 'mult-choice',
+                            options: {
+                              numQuestions: 1
+                            }
+                          });
+                        }} />
+                    </div>
+                  </AddQuestion>
+                </div>
+              )}
+            />
+
           </FormGroup>
         )}
       </Formik>
-      {
-        (questions.length) ? (
-          // TODO render out the questions
-          questions.map((q, i) => (
-            <NewQuestion key={i} index={i} handleQuestionFieldChange={handleQuestionFieldChange}/>
-          ))
-        ) : (
-          <NoQuestions>You have no questions</NoQuestions>
-        )
-      }
-      <AddQuestion>
-        <SubHeader>
-          New Question
-        </SubHeader>
-        <div>
-          <AddCircleIcon fontSize="large" style={{ margin: 'auto' }} onClick={addNewQuestion} />
-        </div>
-      </AddQuestion>
     </Container>
   );
 }
@@ -91,7 +102,7 @@ const InputField = styled(Field)`
 const ErrorLabel = styled(ErrorMessage)`
   font-size: .8rem;
   position: absolute;
-  bottom: 0;
+  top: 4.2rem;
   color: red;
 `;
 
