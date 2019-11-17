@@ -34,7 +34,7 @@ const ErrorLabel = styled(ErrorMessage)`
 `;
 
 const FormGroup = styled(Form)`
-position: relative;
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;

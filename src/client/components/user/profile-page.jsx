@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Paper, Box } from '@material-ui/core';
 import styled from 'styled-components';
+import { Link } from 'react-router-dom';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 
 export default function ProfilePage(props) {
@@ -13,39 +14,43 @@ export default function ProfilePage(props) {
 
   return (
     <Container>
-      <Paper style={{ padding: '.5rem' }}>
-        <Div>
-          <Header>
+      <Div>
+        <Header>
             Surveys
-          </Header>
+        </Header>
+        <BlackLink to="/create-survey">
           <AddSurveyText>
             NEW SURVEY +
           </AddSurveyText>
-        </Div>
-        <Div>
-          {(surveys.length) ? (
-            // TODO display surveys list
-            <div>User Surveys hahaahaahaha</div>
-          ) : (
-            <NoSurveys>
-              <SubHeader>
+        </BlackLink>
+      </Div>
+      <Div>
+        {(surveys.length) ? (
+        // TODO display surveys list
+          <div>User Surveys hahaahaahaha</div>
+        ) : (
+          <NoSurveys>
+            <SubHeader>
                 You have no surveys
-              </SubHeader>
-              <div>
-                <AddCircleIcon fontSize="large" style={{ margin: 'auto' }} />
-              </div>
-            </NoSurveys>
-          )}
-        </Div>
-      </Paper>
+            </SubHeader>
+            <BlackLink to="/create-survey">
+              <AddCircleIcon fontSize="large" style={{ margin: 'auto' }} />
+            </BlackLink>
+          </NoSurveys>
+        )}
+      </Div>
     </Container>
   );
 }
 
+const BlackLink = styled(Link)`
+  color: black;
+  text-decoration: none;
+`;
+
 const Div = styled(Box)`
   position: relative;
   padding: .5rem;
-  margin-top: 1rem;
 `;
 
 const NoSurveys = styled(Div)`
@@ -69,5 +74,5 @@ const AddSurveyText = styled.div`
   position: absolute;
   font-size: 1.5rem;
   right: 1rem;
-  top: 2rem;
+  top: 1.5rem;
 `;

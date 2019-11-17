@@ -8,11 +8,6 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "watch": "nodemon src/server/index.js"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
   "lint-staged": {
     "*.{js,jsx}": [
       "eslint --fix",
