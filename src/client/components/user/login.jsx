@@ -85,6 +85,7 @@ export default function Login(props) {
           throw new Error(res.error);
         }
         window.localStorage.setItem('token', res.token);
+        window.localStorage.setItem('userInfo', JSON.stringify(res.userInfo));
         setUserInfo(res.userInfo);
         // now you have the token back
       })
