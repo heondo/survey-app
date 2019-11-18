@@ -1,5 +1,6 @@
 import React from 'react';
 import { Formik, Form, Field, ErrorMessage, FieldArray } from 'formik';
+import { Paper } from '@material-ui/core';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 import styled from 'styled-components';
 
@@ -7,37 +8,98 @@ export default function NewQuestion(props) {
   const { index, arrayHelpers, question } = props;
 
   return (
-    <>
+    <QuestionContainer>
       <Label htmlFor={`questions.${index}.questionName`}>{index + 1}.</Label>
       <InputField
         name={`questions.${index}.questionName`}
         placeholder="ex: How satisfied were you with your shopping experience?"
       />
-      <ErrorLabel name={`questions.${index}.questionName`}/>
+      <ErrorLabel name={`questions.${index}.questionName`} component="div"/>
       <DeleteButton>
         <DeleteOutlineIcon />
       </DeleteButton>
-      <div>
+      <RelDiv>
         <RadioSwitches>
           <Field type="radio" name={`questions.${index}.questionType`} value="mult-choice" /> Multiple Choice
           <Field type="radio" name={`questions.${index}.questionType`} value="free-text" /> Free Text
         </RadioSwitches>
         {
           question.questionType === 'mult-choice' ? (
-            <Field type="number" name={`questions.${index}.options.numQuestions`} />
+            <>
+            <Label>
+              Number of Options (2 - 6)
+            </Label>
+            <Field
+              type="number"
+              min="2"
+              max="6"
+              name={`questions.${index}.options.numOptions`}
+            />
+            <NumOptionsError
+              name={`questions.${index}.options.numOptions`}
+              component="div"
+            />
+            <QuestionOptions>
+              {(question.options.numOptions < 7 && question.options.numOptions > 1) ? (
+                Array.from({ length: question.options.numOptions }, (_, k) => (
+                  <QuestionOptionItem key={k}>
+                    {k + 1}. <Field
+                      type="text"
+                      name={`questions.${index}.options.answerOptions.${k}`}
+                    />
+                  </QuestionOptionItem>
+                ))
+              )
+                : (
+                  <div>
+                    Invalid Number of Questions
+                  </div>
+                )
+              }
+            </QuestionOptions>
+            </>
           ) : (
             <span>
-                Users will be give a text field to respond to your question.
+                Users will be given a text field to respond to your question.
             </span>
           )
         }
-      </div>
-    </>
+      </RelDiv>
+    </QuestionContainer>
   );
 }
 
+const QuestionContainer = styled(Paper)`
+  position: relative;
+  padding: .5rem;
+`;
+
+const QuestionOptionItem = styled.div`
+  margin: .3rem 0;
+`;
+
+const QuestionOptions = styled.div`
+  position: relative;
+  margin: .5rem 0;
+`;
+
+const RelDiv = styled.div`
+  position: relative;
+`;
+
+const NumOptionsError = styled(ErrorMessage)`
+  color: red;
+  display: inline-block
+  position: relative;
+  margin-left: 1rem;
+  font-size: .8rem;
+`;
+
 const ErrorLabel = styled(ErrorMessage)`
   font-size: .8rem;
+  position: absolute;
+  top: 3.5rem;
+  left: 1.7rem;
   color: red;
 `;
 

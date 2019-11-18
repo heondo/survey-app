@@ -12,7 +12,10 @@ import styled from 'styled-components';
 const validationSchema = yup.object().shape({
   surveyName: yup.string().required('* Survey name required'),
   questions: yup.array().of(yup.object().shape({
-    questionName: yup.string().required('Must specify the question name')
+    questionName: yup.string().required('Must specify the question name'),
+    options: yup.object().shape({
+      numOptions: yup.number('Please enter a number').min(2, 'Must have more than one option').max(6, 'Limit of six options').required('Input required')
+    })
   }))
 });
 
@@ -48,7 +51,7 @@ export default function CreateSurvey(props) {
                     name="surveyName"
                     component="div" />
                   {
-                    values.questions.length
+                    (values.questions.length && values.questions.length < 11)
                       ? values.questions.map((q, i) => (
                         <NewQuestion key={i} index={i} arrayHelpers={arrayHelpers} question={values.questions[i]}/>
                       )) : (
@@ -60,24 +63,27 @@ export default function CreateSurvey(props) {
                       New Question
                     </SubHeader>
                     <div>
-                      <AddCircleIcon
-                        fontSize="large"
-                        style={{ margin: 'auto' }}
-                        onClick={() => {
-                          arrayHelpers.push({
-                            questionName: '',
-                            questionType: 'mult-choice',
-                            options: {
-                              numQuestions: 1
-                            }
-                          });
-                        }} />
+                      {values.questions.length === 10 ? <div/> : (
+                        <AddCircleIcon
+                          fontSize="large"
+                          style={{ margin: 'auto' }}
+                          onClick={() => {
+                            arrayHelpers.push({
+                              questionName: '',
+                              questionType: 'mult-choice',
+                              options: {
+                                numOptions: 2,
+                                answerOptions: ['', '', '', '', '', ''],
+                                multipleSelect: false
+                              }
+                            });
+                          }} />
+                      )}
                     </div>
                   </AddQuestion>
                 </div>
               )}
             />
-
           </FormGroup>
         )}
       </Formik>

@@ -47,7 +47,7 @@ router.post('/login', (req, res, next) => {
         userID: id
       }, process.env.JWT_KEY,
       {
-        expiresIn: '6h'
+        expiresIn: '24h'
       });
       res.status(200).json({
         success: true,
