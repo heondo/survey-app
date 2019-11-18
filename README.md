@@ -6,5 +6,7 @@ Store user inputs into a database that the same user can then view the results.
 #### Tools
 * React
 * NodeJS
-* Postgres (??? if i can figure out how to use it in a timely manner then just MySQL) 
+* Postgres
+* Formik
+* JSONWebToken
 * Material-UI things like navbars etc but the rest will be core CSS3
