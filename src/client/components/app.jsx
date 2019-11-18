@@ -15,12 +15,31 @@ export default function App(props) {
     }
   }, [userInfo]);
 
+  const logout = () => {
+    setUserInfo(null);
+    window.localStorage.removeItem('userInfo');
+    window.localStorage.removeItem('token');
+  };
+
   return (
     <Router>
-      <NavigationBar />
+      <NavigationBar logout={logout}/>
       <Switch>
-        <Route exact path="/" render={props => userInfo ? <ProfilePage {...props}/> : <Login {...props} setUserInfo={setUserInfo} />}/>
-        <Route path="" render={props => <CreateSurvey />} />
+        <Route
+          exact
+          path="/"
+          render={props => userInfo ? (
+            <ProfilePage
+              {...props}
+            />
+          ) : (
+            <Login
+              {...props}
+              setUserInfo={setUserInfo}
+            />
+          )}
+        />
+        <Route path="/create-survey" render={props => <CreateSurvey />} />
       </Switch>
     </Router>
   );

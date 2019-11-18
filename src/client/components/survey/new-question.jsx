@@ -15,7 +15,11 @@ export default function NewQuestion(props) {
         placeholder="ex: How satisfied were you with your shopping experience?"
       />
       <ErrorLabel name={`questions.${index}.questionName`} component="div"/>
-      <DeleteButton>
+      <DeleteButton
+        onClick={() => {
+          arrayHelpers.remove(index);
+        }}
+      >
         <DeleteOutlineIcon />
       </DeleteButton>
       <RelDiv>
