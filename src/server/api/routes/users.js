@@ -73,7 +73,7 @@ router.post('/signup', (req, res, next) => {
     const hashPW = hash;
     const signupQuery = {
       name: 'add-user',
-      text: 'INSERT INTO users(first, last, email, password) VALUES($1, $2, $3, $4) RETURNING id',
+      text: 'INSERT INTO users(first, last, email, password, date_created) VALUES($1, $2, $3, $4, now()) RETURNING id',
       values: [first, last, email, hashPW]
     };
     client.query(signupQuery, (err, data) => {
