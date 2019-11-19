@@ -1,11 +1,15 @@
 import React from 'react';
-import { Formik, Form, Field, ErrorMessage, FieldArray } from 'formik';
+import { Formik, Form, Field, ErrorMessage, FieldArray, FastField } from 'formik';
 import { Divider } from '@material-ui/core';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 import styled from 'styled-components';
 
 export default function NewQuestion(props) {
-  const { index, arrayHelpers, question } = props;
+  const { index, arrayHelpers, question, setFieldValue } = props;
+
+  const resize = (arr, newSize) => {
+    return [...arr, ...Array(Math.max(newSize - arr.length, 0)).fill('')];
+  };
 
   return (
     <>
@@ -34,12 +38,12 @@ export default function NewQuestion(props) {
               <Label>
                 Number of Options (2 - 6)
               </Label>
-              <Field
-                type="number"
-                min="2"
-                max="6"
-                name={`questions.${index}.options.numOptions`}
-              />
+                <FastField
+                  type="number"
+                  min="2"
+                  max="6"
+                  name={`questions.${index}.options.numOptions`}
+                />
               <NumOptionsError
                 name={`questions.${index}.options.numOptions`}
                 component="div"
@@ -77,7 +81,7 @@ export default function NewQuestion(props) {
   );
 }
 
-const MultChoiceField = styled(Field)`
+const MultChoiceField = styled(FastField)`
   max-width: 350px;
   width: 100%;
 `;
@@ -125,7 +129,7 @@ const Label = styled.label`
   margin-right: 1rem;
 `;
 
-const InputField = styled(Field)`
+const InputField = styled(FastField)`
   width: 70%;
   font-size: 1rem;
   height: 2.5rem;

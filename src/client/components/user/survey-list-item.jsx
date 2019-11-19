@@ -30,19 +30,19 @@ export default function SurveyListItem(props) {
       </div>
       <ShareViewButtons>
         <Button variant="contained" style={{ marginRight: '.5rem' }}
+          onClick={getSurveyLink}
+        >
+          Share
+        </Button>
+        <Button
+          variant="contained"
           onClick={() => {
             const str = `${survey.survey_name}_${survey.id}`;
             const b64URL = window.btoa(str);
             props.history.push(`/surveys/take?identifier=${b64URL}`);
           }}
         >
-          Share
-        </Button>
-        <Button
-          variant="contained"
-          onClick={getSurveyLink}
-        >
-          View Results
+      View Results
         </Button>
       </ShareViewButtons>
       <Divider style={{ marginTop: '1rem' }}/>

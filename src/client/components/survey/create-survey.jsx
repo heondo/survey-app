@@ -73,7 +73,7 @@ export default function CreateSurvey(props) {
         validationSchema={validationSchema}
         onSubmit={saveSurvey}
       >
-        {({ values }) => (
+        {({ values, setFieldValue }) => (
           <FormGroup
             onChange={e => {
               window.localStorage.setItem('savedSurvey', JSON.stringify(values));
@@ -99,7 +99,7 @@ export default function CreateSurvey(props) {
                   {
                     (values.questions.length && values.questions.length < 11)
                       ? values.questions.map((q, i) => (
-                        <NewQuestion key={i} index={i} arrayHelpers={arrayHelpers} question={values.questions[i]} />
+                        <NewQuestion key={i} index={i} setFieldValue={setFieldValue} arrayHelpers={arrayHelpers} question={values.questions[i]} />
                       )) : (
                         <NoQuestions>You have no questions</NoQuestions>
                       )
