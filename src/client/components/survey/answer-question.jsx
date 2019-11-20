@@ -65,6 +65,7 @@ export default function AnswerQuestion(props) {
 }
 const QuestionContainer = styled.div`
   position: relative;
+  margin: .5rem 0;
 `;
 
 const FreeInput = styled(Field)`
