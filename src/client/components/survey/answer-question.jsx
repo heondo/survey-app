@@ -1,41 +1,54 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { Field } from 'formik';
 
 export default function AnswerQuestion(props) {
-  const { question, index, value } = props;
+  const { question, index, value, handleChange, setFieldValue } = props;
   const { question_name: questionName, options, question_id: questionID, question_type: questionType } = question;
 
-  const FreeChoice = () => (
-    <div>
-      <Field
-        placeholder="Your response"
-        name={`questions.${index}`}
-        onChange={e => {
-          console.log(e.target.value);
-        }}
-      />
-    </div>
-  );
+  useEffect(() => {
+  }, []);
 
-  const MultChoice = () => (
-    <div>
-      {options.answerOptions.map((o, i) => {
-        if (o) {
-          return (
+  const FreeChoice = () => {
+    return (
+      <div>
+        <Field
+          placeholder="Your response"
+          name={`questions.${index}`}
+        />
+      </div>
+    );
+  };
+
+  const MultChoice = () => {
+    let optionsArray = [];
+    options.answerOptions.forEach((o, i) => {
+      if (o) {
+        optionsArray.push(o);
+      }
+    });
+    return (
+      <div onClick={() => {
+        console.log('not even working');
+      }}>
+        {
+          optionsArray.map((o, i) => (
             <div key={i}>
               <Field
+                checked={ value === o }
+                key={i}
+                onChange={handleChange}
                 type="radio"
                 value={o}
                 name={`questions.${index}`}
               />
               {o}
             </div>
-          );
+          ))
         }
-      })}
-    </div>
-  );
+      </div>
+    );
+  };
 
   return (
     <QuestionContainer>
@@ -43,11 +56,9 @@ export default function AnswerQuestion(props) {
         {index + 1}. {questionName}
       </div>
       {
-        questionType === 'free-text' ? (
-          <FreeChoice />
-        ) : (
-          <MultChoice />
-        )
+        questionType === 'free-text'
+          ? <FreeChoice />
+          : <MultChoice />
       }
     </QuestionContainer>
   );

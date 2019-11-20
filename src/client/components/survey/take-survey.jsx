@@ -19,7 +19,6 @@ const FormGroup = styled(Form)`
 export default function TakeSurvey(props) {
   const [surveyLoaded, setSurveyLoaded] = useState(false);
   const [survey, setSurvey] = useState({});
-  const [initValues, setInitValues] = useState([]);
 
   useEffect(() => {
     getSurveyInfo();
@@ -35,8 +34,8 @@ export default function TakeSurvey(props) {
           throw new Error(res.error);
         }
         setSurvey(res.survey);
-        createInitialValues(res.survey);
         setSurveyLoaded(true);
+
       })
       .catch(err => console.error(err));
   };
@@ -44,7 +43,7 @@ export default function TakeSurvey(props) {
   const createInitialValues = survey => {
     // loop through questions set the default to first option
     const vals = survey.question_array.map(q => q.question_type === 'mult-choice' ? q.options.answerOptions[0] : '');
-    setInitValues(vals);
+    return vals;
   };
 
   return surveyLoaded ? (
@@ -55,10 +54,10 @@ export default function TakeSurvey(props) {
       </HeaderContainer>
       <Formik
         initialValues={{
-          questions: initValues
+          questions: createInitialValues(survey)
         }}
       >
-        {({ values }) => (
+        {({ handleChange, values, setFieldValue }) => (
           <FormGroup>
             <FieldArray
               name="questions"
@@ -67,7 +66,7 @@ export default function TakeSurvey(props) {
                   <div>
                     {
                       survey.question_array.map((q, i) => (
-                        <AnswerQuestion {...props} key={q.id} index={i} question={q} value={values.questions[i]}/>
+                        <AnswerQuestion {...props} key={q.id} index={i} question={q} value={values.questions[i]} handleChange={handleChange} setFieldValue={setFieldValue}/>
                       ))
                     }
                   </div>

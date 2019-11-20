@@ -146,7 +146,6 @@ export default function CreateSurvey(props) {
           </FormGroup>
         )}
       </Formik>)}
-
     </Container>
   );
 }
