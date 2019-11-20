@@ -49,7 +49,7 @@ export default function ProfilePage(props) {
             {(surveys.length) ? (
               // TODO display surveys list
               surveys.map((survey, i) => (
-                <SurveyListItem {...props} key={survey.id} survey={survey}/>
+                <SurveyListItem {...props} key={survey.id} survey={survey} setSurveysLoaded={setSurveysLoaded}/>
               ))
             ) : (
               <NoSurveys>

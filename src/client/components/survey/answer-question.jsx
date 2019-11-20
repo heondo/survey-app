@@ -12,9 +12,11 @@ export default function AnswerQuestion(props) {
   const FreeChoice = () => {
     return (
       <div>
-        <Field
+        <FreeInput
+          component="textarea"
           placeholder="Your response"
           name={`questions.${index}`}
+          rows="3"
         />
       </div>
     );
@@ -28,9 +30,7 @@ export default function AnswerQuestion(props) {
       }
     });
     return (
-      <div onClick={() => {
-        console.log('not even working');
-      }}>
+      <div>
         {
           optionsArray.map((o, i) => (
             <div key={i}>
@@ -57,12 +57,16 @@ export default function AnswerQuestion(props) {
       </div>
       {
         questionType === 'free-text'
-          ? <FreeChoice />
-          : <MultChoice />
+          ? FreeChoice()
+          : MultChoice()
       }
     </QuestionContainer>
   );
 }
 const QuestionContainer = styled.div`
   position: relative;
+`;
+
+const FreeInput = styled(Field)`
+  width: 100%;
 `;

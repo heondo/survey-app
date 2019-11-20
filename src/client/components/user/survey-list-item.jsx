@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import moment from 'moment';
 
 export default function SurveyListItem(props) {
-  const { survey } = props;
+  const { survey, setSurveysLoaded } = props;
   const [modalOpen, setModalOpen] = useState(false);
   const [modalText, setModalText] = useState('');
 
@@ -37,6 +37,7 @@ export default function SurveyListItem(props) {
         <Button
           variant="contained"
           onClick={() => {
+            setSurveysLoaded(false);
             const str = `${survey.survey_name}_${survey.id}`;
             const b64URL = window.btoa(str);
             props.history.push(`/surveys/take?identifier=${b64URL}`);
