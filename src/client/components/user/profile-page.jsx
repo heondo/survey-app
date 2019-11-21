@@ -12,7 +12,7 @@ export default function ProfilePage(props) {
 
   const getSurveys = () => {
     const token = window.localStorage.getItem('token');
-    fetch('/api/surveys', {
+    fetch('/api/users/surveys', {
       headers: { 'Authorization': `Bearer ${token}` }
     })
       .then(res => res.json())

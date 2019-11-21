@@ -15,6 +15,11 @@ export default function SurveyListItem(props) {
     setModalOpen(true);
   };
 
+  const goToResults = () => {
+    // setSurveysLoaded(false);
+    props.history.push(`/view-results/${survey.id}`);
+  };
+
   return (
     <UserSurveyContainer>
       <SurveyName>
@@ -30,18 +35,24 @@ export default function SurveyListItem(props) {
       </div>
       <ShareViewButtons>
         <Button variant="contained" style={{ marginRight: '.5rem' }}
-          onClick={getSurveyLink}
+          onClick={
+            // getSurveyLink
+            () => {
+              setSurveysLoaded(false);
+              const str = `${survey.survey_name}_${survey.id}`;
+              const b64URL = window.btoa(str);
+              props.history.push(`/surveys/take?identifier=${b64URL}`);
+            }
+          }
         >
           Share
         </Button>
         <Button
           variant="contained"
-          onClick={() => {
-            setSurveysLoaded(false);
-            const str = `${survey.survey_name}_${survey.id}`;
-            const b64URL = window.btoa(str);
-            props.history.push(`/surveys/take?identifier=${b64URL}`);
-          }}
+          onClick={
+            goToResults
+
+          }
         >
       View Results
         </Button>

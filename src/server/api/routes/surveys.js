@@ -72,27 +72,6 @@ router.post('/', checkAuth, (req, res, next) => {
   });
 });
 
-router.get('/', checkAuth, (req, res, next) => {
-  // I want to get the surveys that I have created;
-  const { userData } = req;
-  const { userID } = userData;
-  const getUserSurveys = {
-    name: 'get-user-surveys',
-    text: 'SELECT s.id, s.survey_name, s.date_created, q.num_questions FROM surveys as s LEFT JOIN (SELECT survey_id, COUNT(*) as num_questions FROM questions GROUP BY survey_id) as q ON q.survey_id = s.id WHERE s.user_id = $1 ORDER BY s.date_created DESC',
-    values: [userID]
-  };
-  client.query(getUserSurveys, (err, data) => {
-    if (err) {
-      res.status(500);
-      return next(err);
-    }
-    res.status(200).json({
-      success: true,
-      surveys: data.rows
-    });
-  });
-});
-
 router.get('/take/:id', (req, res, next) => {
   const { id } = req.params;
   const getSurveyQuery = {
@@ -111,6 +90,139 @@ router.get('/take/:id', (req, res, next) => {
       survey: data.rows[0]
     });
   });
+});
+
+router.post('/take/:id', (req, res, next) => {
+  const { id } = req.params;
+  const { questionID, answers } = req.body;
+  const rollBackQuery = createError => {
+    client.query('ROLLBACK', err => {
+      if (err) {
+        res.status(500);
+        return next(err);
+      }
+      res.status(500);
+      return next(createError);
+    });
+  };
+  // res.send(answers);
+  client.query('BEGIN', err => {
+    if (err) {
+      res.status(500);
+      return next(err);
+    }
+    const getGroupIDQuery = 'SELECT COALESCE(MAX(group_id), 0) + 1 AS newGroupID FROM responses';
+    client.query(getGroupIDQuery, (err, groupIDData) => {
+      if (err) {
+        return rollBackQuery(err);
+      }
+      const newGroupID = groupIDData.rows[0].newgroupid;
+      let insertText = 'INSERT INTO responses(question_id, group_id, response, date_response) VALUES ';
+      let insertValues = [];
+      answers.forEach((a, i, arr) => {
+        insertText += `($${1 + 3 * i}, $${2 + 3 * i}, $${3 + 3 * i}, now())`;
+        if (i !== arr.length - 1) {
+          insertText += ',';
+        }
+        insertValues.push(a.questionID, newGroupID, a.answer);
+      });
+      const insertResponsesQuery = {
+        name: 'insert-response-array',
+        text: insertText,
+        values: insertValues
+      };
+      client.query(insertResponsesQuery, (err, insertData) => {
+        if (err) {
+          return rollBackQuery(err);
+        }
+        client.query('COMMIT', err => {
+          if (err) {
+            res.status(500);
+            return next(err);
+          }
+          res.status(200);
+          res.json({
+            success: true,
+            message: `Inserted ${insertData.rowCount} responses`
+          });
+        });
+      });
+    });
+  });
+});
+
+router.get('/results/:surveyID', checkAuth, (req, res, next) => {
+  const { userData, params } = req;
+  const { surveyID } = params;
+  const { userID } = userData;
+  const surveyResponsesQuery = {
+    name: 'survey-responses',
+    text: "SELECT s.id AS survey_id, s.survey_name, s.date_created AS survey_date, q.question_id, q.question_info, q.responses FROM surveys AS s LEFT JOIN ( SELECT q.id as question_id, q.survey_id, json_build_object('questionName', q.question_name, 'questionType', q.question_type, 'options', q.options) as question_info, json_agg(json_build_object('responseGroup', r.group_id, 'response', r.response, 'responseDate', r.date_response)) as responses FROM questions as q LEFT JOIN ( SELECT * FROM responses ) as r ON r.question_id = q.id GROUP BY q.id ) AS q ON s.id = q.survey_id WHERE s.id = $1 AND s.user_id = $2",
+    values: [surveyID, userID]
+  };
+  client.query(surveyResponsesQuery, (err, data) => {
+    if (err) {
+      res.status(500);
+      return next(err);
+    }
+    // So.... I need the data in a format so the creator can do the following
+    // view the answers chart, each question is an x axis, then with a count for each response
+    /**
+     * questionName: "How would you rate the movie Iron Man",
+     * results: {
+     *   great: 5,
+     *   average: 3,
+     *    bad: 9
+     * }
+     */
+    const responses = data.rows;
+    const answerCounts = responses.filter(r => r.question_info.questionType === 'mult-choice').map(r => {
+      const { options, questionName } = r.question_info;
+      let chartData = {
+        x: questionName,
+        results: {}
+      };
+      options.answerOptions.forEach(answerOption => {
+        chartData.results[answerOption] = 0;
+      });
+      r.responses.forEach(userResponse => {
+        chartData.results[userResponse.response]++;
+      });
+      return chartData;
+    });
+    // There is going to be an x value for each Question.
+    const chartResponse = answerCounts.map(q => {
+      let tempData = {};
+      // console.log(q);
+      const xValue = q.x;
+      for (let answerOption in q.results) {
+        // if (!tempData.hasOwnProperty(answerOption)) {
+        // tempData[answerOption] = [];
+        // }
+        // console.log({
+        //   x: xValue,
+        //   y: data[answerOption]
+        // });
+        tempData[answerOption] = {
+          x: xValue,
+          y: q.results[answerOption]
+        };
+      }
+      return tempData;
+    });
+
+    res.status(200);
+    res.json({
+      success: true,
+      responses,
+      responseCount: responses[0].responses[0].responseGroup ? responses[0].responses.length : 0,
+      answerCounts,
+      chartResponse
+    });
+  });
+  // get survey data,
+  // get survey data, if the survey owner id doesnt match the token id dont let thmem?
+  // so for a single survey, there are three questions
 });
 
 module.exports = router;

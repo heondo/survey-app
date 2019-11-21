@@ -4,7 +4,9 @@ import NavigationBar from './helper/nav-bar';
 import CreateSurvey from './survey/create-survey';
 import ProfilePage from './user/profile-page';
 import Login from './user/login';
+import CompleteSurvey from './survey/complete-survey';
 import TakeSurvey from './survey/take-survey';
+import ViewResults from './survey/view-results';
 
 export default function App(props) {
   const [userInfo, setUserInfo] = useState(null);
@@ -40,9 +42,12 @@ export default function App(props) {
             />
           )}
         />
+        <Route path="/completed" render={props => <CompleteSurvey {...props}/>}/>
         <Route path="/create-survey" render={props => <CreateSurvey {...props}/>} />
         <Route path="/surveys/take" render={props => <TakeSurvey {...props}/>} />
+        <Route path="/view-results/:id" render={props => <ViewResults {...props} />} />
       </Switch>
+
     </Router>
   );
 }

@@ -18,12 +18,13 @@ const FormGroup = styled(Form)`
 `;
 
 const validationSchema = yup.object().shape({
-  questions: yup.array().of(yup.string().required('Response is required'))
+  questions: yup.array().of(yup.string().max(256, 'Please limit response to 256 characters').required('* Response is required'))
 });
 
 export default function TakeSurvey(props) {
   const [surveyLoaded, setSurveyLoaded] = useState(false);
   const [survey, setSurvey] = useState({});
+  let id;
 
   useEffect(() => {
     getSurveyInfo();
@@ -31,25 +32,36 @@ export default function TakeSurvey(props) {
 
   const submitSurvey = values => {
     // the answers are input here in values, get the question ID associated with it
+    setSurveyLoaded(false);
     const answers = survey.question_array.map((q, i) => ({
       questionID: q.id,
       answer: values.questions[i]
     }));
-    fetch('/api/responses', {
+    fetch(`/api/surveys/take/${id}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(answers)
+      body: JSON.stringify({
+        answers
+      })
     })
       .then(res => res.json())
       .then(res => {
-        console.log(res);
+        if (res.error) {
+          throw new Error(res.error);
+        }
+        if (res.success) {
+          props.history.push('/completed');
+        }
       })
-      .catch(err => console.error(err));
+      .catch(err => {
+        setSurveyLoaded(true);
+        console.error(err);
+      });
   };
 
   const getSurveyInfo = () => {
     const b64 = querystring.parse(props.location.search)['?identifier'];
-    const id = window.atob(b64).split('_')[1];
+    id = window.atob(b64).split('_')[1];
     fetch(`/api/surveys/take/${id}`)
       .then(res => res.json())
       .then(res => {

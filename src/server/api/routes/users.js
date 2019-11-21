@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
+const checkAuth = require('../middleware/check-auth');
 const { Client } = require('pg');
 const client = new Client();
 const jwt = require('jsonwebtoken');
@@ -112,6 +113,27 @@ router.delete('/:userID', (req, res, next) => {
       success: true,
       data,
       message: `User deleted at id ${data.rows[0].id}`
+    });
+  });
+});
+
+router.get('/surveys', checkAuth, (req, res, next) => {
+  // I want to get the surveys that I have created;
+  const { userData } = req;
+  const { userID } = userData;
+  const getUserSurveys = {
+    name: 'get-user-surveys',
+    text: 'SELECT s.id, s.survey_name, s.date_created, q.num_questions FROM surveys as s LEFT JOIN (SELECT survey_id, COUNT(*) as num_questions FROM questions GROUP BY survey_id) as q ON q.survey_id = s.id WHERE s.user_id = $1 ORDER BY s.date_created DESC',
+    values: [userID]
+  };
+  client.query(getUserSurveys, (err, data) => {
+    if (err) {
+      res.status(500);
+      return next(err);
+    }
+    res.status(200).json({
+      success: true,
+      surveys: data.rows
     });
   });
 });

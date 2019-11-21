@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
-import { Field } from 'formik';
+import { Field, ErrorMessage } from 'formik';
 
 export default function AnswerQuestion(props) {
   const { question, index, value, handleChange, setFieldValue } = props;
@@ -60,12 +60,13 @@ export default function AnswerQuestion(props) {
           ? FreeChoice()
           : MultChoice()
       }
+      <ErrorMessage component="div" name={`questions.${index}`}/>
     </QuestionContainer>
   );
 }
 const QuestionContainer = styled.div`
   position: relative;
-  margin: .5rem 0;
+  margin: 1rem 0;
 `;
 
 const FreeInput = styled(Field)`
