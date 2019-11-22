@@ -19,7 +19,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function NavigationBar(props) {
-  const { logout } = props;
+  const { logout, userInfo } = props;
   const classes = useStyles();
 
   return (
@@ -33,15 +33,18 @@ export default function NavigationBar(props) {
             <Link className={classes.homeLink} to="/" >Surveyor</Link>
           </Typography>
           <LogoutButton>
-            <Link
-              to="/"
-              className={classes.homeLink}
-              onClick={logout}
-            >
-              <Typography>
-                LOG OUT
-              </Typography>
-            </Link>
+            {
+              userInfo ? (
+                <Link
+                  to="/"
+                  className={classes.homeLink}
+                  onClick={logout}
+                >
+                  <Typography>
+                  LOG OUT
+                  </Typography>
+                </Link>) : null
+            }
           </LogoutButton>
         </Toolbar>
       </AppBar>

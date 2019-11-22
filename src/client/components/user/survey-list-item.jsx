@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { makeStyles, Divider, Button, Modal } from '@material-ui/core';
+import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
+import CancelOutlinedIcon from '@material-ui/icons/CancelOutlined';
 import styled from 'styled-components';
 import moment from 'moment';
 
@@ -51,7 +53,6 @@ export default function SurveyListItem(props) {
           variant="contained"
           onClick={
             goToResults
-
           }
         >
       View Results
@@ -59,7 +60,8 @@ export default function SurveyListItem(props) {
       </ShareViewButtons>
       <Divider style={{ marginTop: '1rem' }}/>
       <EditDeleteButtons>
-        Edit and Delete Buttons
+        <EditOutlinedIcon />
+        <CancelOutlinedIcon />
       </EditDeleteButtons>
       <Modal
         onClose={() => {
@@ -80,7 +82,6 @@ export default function SurveyListItem(props) {
           {modalText}
         </div>
       </Modal>
-      {/* <Modal open={modalOpen}>...</Modal> */}
     </UserSurveyContainer>
   );
 }

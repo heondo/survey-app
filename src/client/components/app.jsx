@@ -26,7 +26,7 @@ export default function App(props) {
 
   return (
     <Router>
-      <NavigationBar logout={logout}/>
+      <NavigationBar logout={logout} userInfo={userInfo}/>
       <Switch>
         <Route
           exact
