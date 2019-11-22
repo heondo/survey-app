@@ -22,16 +22,20 @@ export default function ViewResults(props) {
 
   function generateBars() {
     let arrayOfBars = [];
+    console.log('the view results renders for ever');
     chartData.forEach(question => {
       for (let option in question) {
-        arrayOfBars.push(<VerticalBarSeries
-          data={[question[option]]}
-          onSeriesMouseOver={() => {
-            rememberValue(option, question[option].y);
-          }}
-          onSeriesMouseOut={() =>
-            setToolTip(null)}
-        />);
+        arrayOfBars.push((
+          <VerticalBarSeries
+            key={option}
+            data={[question[option]]}
+            onSeriesMouseOver={() => {
+              rememberValue(option, question[option].y);
+            }}
+            onSeriesMouseOut={() =>
+              setToolTip(null)}
+          />)
+        );
       }
     });
     return arrayOfBars;
@@ -39,7 +43,7 @@ export default function ViewResults(props) {
 
   useEffect(() => {
     getSurveyResults();
-  }, []);
+  }, [props.match.params.id]);
 
   const getSurveyResults = () => {
     const token = window.localStorage.getItem('token');
@@ -61,37 +65,6 @@ export default function ViewResults(props) {
       .catch(err => console.error(err));
   };
 
-  // function generateQuestionOverview() {
-  //   return answerCounts.map(question => {
-  //     const stats = [];
-  //     for (let choice in question.results) {
-  //       stats.push(
-  //         <div>
-  //           {choice} - {question.results[choice]}
-  //         </div>
-  //       );
-  //     }
-  //     return (
-  //         <>
-  //         <div>
-  //           {question.question}
-  //         </div>
-  //         {stats}
-  //       </>
-  //     );
-  //   });
-  // }
-  function StatsArray(props) {
-    const { question } = props;
-    return (
-      <div>
-        <h3>
-          {question.x}
-        </h3>
-      </div>
-    );
-  }
-
   return isLoaded ? (
     <Container>
       <h4>{surveyResults[0].survey_name}</h4>
@@ -106,18 +79,95 @@ export default function ViewResults(props) {
         {toolTip ? <Hint value={toolTip} /> : null}
       </PlotContainer>
       <div>
-        {responseCount ? answerCounts.map((question, i) => (
-          <StatsArray key={i} question={question}/>
-        )
-        )
-          : null}
+        <MultChoice>Multiple Choice Stats</MultChoice>
+        {
+          answerCounts.map((q, i) => (
+            <StatsArray key={i} question={q} responseCount={responseCount}/>
+          ))
+        }
       </div>
     </Container>
   )
     : <LoadingCircle />;
 }
 
+function StatsArray(props) {
+  const { question, responseCount } = props;
+  const { x: questionName, results } = question;
+
+  useEffect(() => {}, []);
+
+  return (
+    <div>
+      <QuestionName>
+        {questionName}
+      </QuestionName>
+      <div style={{ display: 'flex' }}>
+        <span>
+          {Object.keys(results).map((key, i) => {
+            return (
+              <div key={i}>{key}</div>
+            );
+          })}
+        </span>
+        <PercentagesContainer>
+          {Object.values(results).map((val, i) => {
+            const percent = ((val / responseCount) * 100).toFixed(2);
+            const randomColor = '#' + (Math.random() * 0xFFFFFF << 0).toString(16);
+            return (
+              <div
+                key={i}
+                style={{
+                  border: '1px solid black',
+                  backgroundColor: `${randomColor}`
+                }}
+              >
+                {percent}
+              </div>
+            );
+          })}
+        </PercentagesContainer>
+        <span>
+          {Object.values(results).map((val, i) => {
+            return (
+              <div key={i}>{val}</div>
+            );
+          })}
+        </span>
+      </div>
+    </div>
+  );
+}
+
 const PlotContainer = styled(XYPlot)`
   position: relative;
   margin: 0 auto;
+`;
+
+const QuestionName = styled.div`
+  font-size: 1rem;
+  margin: .5rem 0;
+  display: inline-block;
+`;
+
+const QuestionStatContainer = styled.div`
+  /* margin: 1rem 0; */
+`;
+
+const MultChoice = styled.div`
+  font-size: 1.2rem;
+`;
+
+const PercentagesContainer = styled.span`
+  width: 200px;
+  /* height: 20px; */
+  margin: 0 1rem;
+`;
+
+const PercentBar = styled.div`
+  border: 1px solid black;
+  background: -webkit-linear-gradient(left, transparent 50%, white 50%);
+  background: -moz-linear-gradient(left, transparent 50%, white 50%);
+  background: -ms-linear-gradient(left, transparent 50%, white 50%);
+  background: linear-gradient(left, transparent 50%, white 50%);
 `;

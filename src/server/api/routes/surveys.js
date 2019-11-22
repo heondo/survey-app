@@ -165,16 +165,7 @@ router.get('/results/:surveyID', checkAuth, (req, res, next) => {
       res.status(500);
       return next(err);
     }
-    // So.... I need the data in a format so the creator can do the following
-    // view the answers chart, each question is an x axis, then with a count for each response
-    /**
-     * questionName: "How would you rate the movie Iron Man",
-     * results: {
-     *   great: 5,
-     *   average: 3,
-     *    bad: 9
-     * }
-     */
+
     const responses = data.rows;
     const answerCounts = responses.filter(r => r.question_info.questionType === 'mult-choice').map(r => {
       const { options, questionName } = r.question_info;
@@ -193,16 +184,8 @@ router.get('/results/:surveyID', checkAuth, (req, res, next) => {
     // There is going to be an x value for each Question.
     const chartResponse = answerCounts.map(q => {
       let tempData = {};
-      // console.log(q);
       const xValue = q.x;
       for (let answerOption in q.results) {
-        // if (!tempData.hasOwnProperty(answerOption)) {
-        // tempData[answerOption] = [];
-        // }
-        // console.log({
-        //   x: xValue,
-        //   y: data[answerOption]
-        // });
         tempData[answerOption] = {
           x: xValue,
           y: q.results[answerOption]
