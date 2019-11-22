@@ -36,8 +36,13 @@ export default function ViewResults(props) {
       <div>Created {moment(response.responses[0].survey_date).calendar()}</div>
       <div>With {response.responseCount} responses so far</div>
       <SurveyPlot response={response}/>
-      <MultipleChoicePercentages responseCount={response.responseCount} answerCounts={response.answerCounts}/>
-      <FreeTextResponses responses={response.responses}/>
+      {response.responseCount ? (
+        <>
+          <MultipleChoicePercentages responseCount={response.responseCount} answerCounts={response.answerCounts} />
+          <FreeTextResponses responses={response.responses} />
+        </>
+      ) : (<div>No responses</div>)}
+
     </Container>
   ) : (
     <LoadingCircle />
@@ -61,9 +66,9 @@ function FreeTextResponses(props) {
     const freeTexts = responses.filter(q => q.question_info.questionType === 'free-text');
     const returnArray = freeTexts.map((q, i) => (
       <div key={i}>
-        <h3>
+        <QuestionName>
           {q.question_info.questionName}
-        </h3>
+        </QuestionName>
         <FreeResponsesScroll>
           {q.responses.map((r, i) => (
             <div key={i}>
@@ -73,17 +78,7 @@ function FreeTextResponses(props) {
         </FreeResponsesScroll>
       </div>
     ));
-    // freeTexts.forEach(q => {
-    //   q.responses.forEach(r => {
-    //     returnArray.push((
-    //       <div>
-    //         {r.response}
-    //       </div>
-    //     ));
-    //   });
-    // });
 
-    console.log('what the fuck');
     setRenderArray(returnArray);
   };
 

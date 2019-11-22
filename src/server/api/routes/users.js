@@ -123,7 +123,7 @@ router.get('/surveys', checkAuth, (req, res, next) => {
   const { userID } = userData;
   const getUserSurveys = {
     name: 'get-user-surveys',
-    text: 'SELECT s.id, s.survey_name, s.date_created, q.num_questions FROM surveys as s LEFT JOIN (SELECT survey_id, COUNT(*) as num_questions FROM questions GROUP BY survey_id) as q ON q.survey_id = s.id WHERE s.user_id = $1 ORDER BY s.date_created DESC',
+    text: 'SELECT s.id, s.survey_name, s.date_created, q.num_questions, num.num_responses FROM surveys as s LEFT JOIN ( SELECT survey_id, COUNT(*) as num_questions FROM questions GROUP BY survey_id ) as q ON q.survey_id = s.id LEFT JOIN ( SELECT distinct s.id as survey_id, q.num_responses from surveys as s left join ( select q.id, q.survey_id, num_r.num_responses from questions as q LEFT JOIN ( select r.question_id, count(r.group_id) as num_responses from responses as r group by r.question_id ) as num_r on num_r.question_id = q.id ) as q on s.id = q.survey_id group by s.id, q.num_responses ) as num on num.survey_id = s.id WHERE s.user_id = $1 ORDER BY s.date_created DESC',
     values: [userID]
   };
   client.query(getUserSurveys, (err, data) => {

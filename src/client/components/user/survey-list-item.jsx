@@ -18,7 +18,6 @@ export default function SurveyListItem(props) {
   };
 
   const goToResults = () => {
-    // setSurveysLoaded(false);
     props.history.push(`/view-results/${survey.id}`);
   };
 
@@ -34,6 +33,9 @@ export default function SurveyListItem(props) {
       </SurveyName>
       <div>
         {survey.num_questions} Questions
+      </div>
+      <div>
+        {survey.num_responses || 0} Responses
       </div>
       <ShareViewButtons>
         <Button variant="contained" style={{ marginRight: '.5rem' }}
