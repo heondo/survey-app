@@ -7,6 +7,7 @@ import Login from './user/login';
 import CompleteSurvey from './survey/complete-survey';
 import TakeSurvey from './survey/take-survey';
 import ViewResults from './survey/view-results';
+import SurveyClosed from './survey/survey-closed';
 import SignUp from './user/signup';
 
 export default function App(props) {
@@ -45,6 +46,7 @@ export default function App(props) {
           )}
         />
         <Route path="/completed" render={props => <CompleteSurvey {...props}/>}/>
+        <Route path="/survey-closed" render={props => <SurveyClosed {...props} />} />
         <Route path="/create-survey" render={props => <CreateSurvey {...props}/>} />
         <Route path="/surveys/take" render={props => <TakeSurvey {...props}/>} />
         <Route path="/view-results/:id" render={props => <ViewResults {...props} />} />

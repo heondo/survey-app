@@ -66,13 +66,18 @@ export default function TakeSurvey(props) {
       .then(res => res.json())
       .then(res => {
         if (res.error) {
+          if (res.error.match('no longer available')) {
+            props.history.push('/survey-closed');
+          }
           throw new Error(res.error);
         }
         setSurvey(res.survey);
         setSurveyLoaded(true);
 
       })
-      .catch(err => console.error(err));
+      .catch(err => {
+        console.error(err);
+      });
   };
 
   const createInitialValues = survey => {

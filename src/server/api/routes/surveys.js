@@ -8,6 +8,36 @@ client.connect();
 
 router.use(express.json());
 
+router.patch('/:id', checkAuth, (req, res, next) => {
+  const { userData, params } = req;
+  const { userID } = userData;
+  const { id: surveyID } = params;
+  const reOpenQuery = {
+    name: 'reopen-query',
+    text: 'update surveys set open = true WHERE id = $1 and user_id = $2 and open=false returning id',
+    values: [surveyID, userID]
+  };
+  client.query(reOpenQuery, (err, data) => {
+    if (err) {
+      res.status(500);
+      return next(err);
+    }
+    if (!data.rowCount) {
+      res.status(404);
+      return next({
+        type: 'Failed to Update',
+        message: 'Either the survey is already closed or credentials do not match'
+      });
+    }
+    res.status(200);
+    res.json({
+      success: true,
+      message: `Updated survey at ID: ${data.rows[0].id}`,
+      surveyID: data.rows[0].id
+    });
+  });
+});
+
 router.delete('/:id', checkAuth, (req, res, next) => {
   const { userData, params } = req;
   const { userID } = userData;
@@ -106,13 +136,20 @@ router.get('/take/:id', (req, res, next) => {
   const { id } = req.params;
   const getSurveyQuery = {
     name: 'take-survey',
-    text: 'SELECT s.id, s.survey_name, s.date_created, q.question_array FROM surveys as s LEFT JOIN (SELECT survey_id, json_agg(questions) as question_array FROM questions GROUP BY survey_id) as q ON q.survey_id = s.id WHERE s.id = $1',
+    text: 'SELECT s.id, s.survey_name, s.date_created, q.question_array FROM surveys as s LEFT JOIN (SELECT survey_id, json_agg(questions) as question_array FROM questions GROUP BY survey_id) as q ON q.survey_id = s.id WHERE s.id = $1 and s.open',
     values: [id]
   };
   client.query(getSurveyQuery, (err, data) => {
     if (err) {
       res.status(500);
       return next(err);
+    }
+    if (!data.rowCount) {
+      res.status(404);
+      return next({
+        type: 'Survey Closed',
+        message: 'Survey is no longer available'
+      });
     }
     res.status(200);
     res.json({
