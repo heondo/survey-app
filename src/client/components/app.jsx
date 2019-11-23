@@ -7,6 +7,7 @@ import Login from './user/login';
 import CompleteSurvey from './survey/complete-survey';
 import TakeSurvey from './survey/take-survey';
 import ViewResults from './survey/view-results';
+import SignUp from './user/signup';
 
 export default function App(props) {
   const [userInfo, setUserInfo] = useState(null);
@@ -34,6 +35,7 @@ export default function App(props) {
           render={props => userInfo ? (
             <ProfilePage
               {...props}
+              logout={logout}
             />
           ) : (
             <Login
@@ -46,6 +48,7 @@ export default function App(props) {
         <Route path="/create-survey" render={props => <CreateSurvey {...props}/>} />
         <Route path="/surveys/take" render={props => <TakeSurvey {...props}/>} />
         <Route path="/view-results/:id" render={props => <ViewResults {...props} />} />
+        <Route path="/signup" render={props => <SignUp {...props} setUserInfo={setUserInfo} />} />
       </Switch>
 
     </Router>

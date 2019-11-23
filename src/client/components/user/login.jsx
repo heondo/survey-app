@@ -31,6 +31,7 @@ const ErrorLabel = styled(ErrorMessage)`
   font-size: .8rem;
   position: absolute;
   margin-top: 3px;
+  color: red;
 `;
 
 const FormGroup = styled(Form)`

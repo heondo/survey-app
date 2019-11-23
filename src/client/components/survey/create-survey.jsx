@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Container, Button } from '@material-ui/core';
 import LoadingCircle from '../helper/loading-circle';
 import { Formik, Form, Field, ErrorMessage, FieldArray } from 'formik';
@@ -28,8 +28,12 @@ const validationSchema = yup.object().shape({
 export default function CreateSurvey(props) {
 
   const [savingSurvey, setSavingSurvey] = useState(false);
+  const [savedSurvey, setSavedSurvey] = useState(JSON.parse(window.localStorage.getItem('savedSurvey')) || null);
 
-  const savedSurvey = window.localStorage.getItem('savedSurvey') || null;
+  const cancelSubmit = () => {
+    window.localStorage.removeItem('savedSurvey');
+    props.history.push('/');
+  };
 
   const saveSurvey = values => {
     setSavingSurvey(true);
@@ -58,7 +62,7 @@ export default function CreateSurvey(props) {
     <Container>
       <h2>Create Survey</h2>
       {(savingSurvey) ? (<LoadingCircle />) : (<Formik
-        initialValues={JSON.parse(savedSurvey) || {
+        initialValues={savedSurvey || {
           surveyName: '',
           questions: [{
             questionName: '',
@@ -70,10 +74,12 @@ export default function CreateSurvey(props) {
             }
           }]
         }}
+        validateOnBlur={false}
+        validateOnChange={false}
         validationSchema={validationSchema}
         onSubmit={saveSurvey}
       >
-        {({ values, setFieldValue }) => (
+        {({ values, setFieldValue, handleChange }) => (
           <FormGroup
             onChange={e => {
               window.localStorage.setItem('savedSurvey', JSON.stringify(values));
@@ -99,22 +105,32 @@ export default function CreateSurvey(props) {
                   {
                     (values.questions.length && values.questions.length < 11)
                       ? values.questions.map((q, i) => (
-                        <NewQuestion key={i} index={i} setFieldValue={setFieldValue} arrayHelpers={arrayHelpers} question={values.questions[i]} />
+                        <NewQuestion key={i} index={i} setFieldValue={setFieldValue} arrayHelpers={arrayHelpers} question={values.questions[i]} handleChange={handleChange} />
                       )) : (
                         <NoQuestions>You have no questions</NoQuestions>
                       )
                   }
                   {
                     values.questions.length ? (
-                      <Button
-                        type="submit"
-                        variant="contained"
-                        style={{
-                          margin: '1rem 0'
-                        }}
-                      >
-                        Save
-                      </Button>
+                      <div style={{
+                        margin: '1rem 0'
+                      }}>
+                        <Button
+                          type="submit"
+                          variant="contained"
+                          style={{
+                            marginRight: '.5rem'
+                          }}
+                        >
+                          Save
+                        </Button>
+                        <Button
+                          variant="contained"
+                          onClick={cancelSubmit}
+                        >
+                          Cancel
+                        </Button>
+                      </div>
                     ) : undefined
                   }
                   <AddQuestion>

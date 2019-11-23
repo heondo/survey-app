@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Paper, Box } from '@material-ui/core';
+import { Container, Box } from '@material-ui/core';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import LoadingCircle from '../helper/loading-circle';
@@ -7,6 +7,7 @@ import AddCircleIcon from '@material-ui/icons/AddCircle';
 import SurveyListItem from './survey-list-item';
 
 export default function ProfilePage(props) {
+  const { logout } = props;
   const [surveysLoaded, setSurveysLoaded] = useState(false);
   const [surveys, setSurveys] = useState([]);
 
@@ -18,6 +19,9 @@ export default function ProfilePage(props) {
       .then(res => res.json())
       .then(res => {
         if (res.error) {
+          if (res.error.message === 'Auth failed') {
+            logout();
+          }
           throw new Error(res.error);
         }
         setSurveys(res.surveys);

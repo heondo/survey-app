@@ -8,6 +8,36 @@ client.connect();
 
 router.use(express.json());
 
+router.delete('/:id', checkAuth, (req, res, next) => {
+  const { userData, params } = req;
+  const { userID } = userData;
+  const { id: surveyID } = params;
+  const deleteQuery = {
+    name: 'delete-query',
+    text: 'update surveys set open = false WHERE id = $1 and user_id = $2 and open=true returning id',
+    values: [surveyID, userID]
+  };
+  client.query(deleteQuery, (err, data) => {
+    if (err) {
+      res.status(500);
+      return next(err);
+    }
+    if (!data.rowCount) {
+      res.status(404);
+      return next({
+        type: 'Failed to Update',
+        message: 'Either the survey is already closed or credentials do not match'
+      });
+    }
+    res.status(200);
+    res.json({
+      success: true,
+      message: `Updated survey at ID: ${data.rows[0].id}`,
+      surveyID: data.rows[0].id
+    });
+  });
+});
+
 router.post('/', checkAuth, (req, res, next) => {
   const { userData, body } = req;
   const { userID } = userData;
@@ -157,7 +187,7 @@ router.get('/results/:surveyID', checkAuth, (req, res, next) => {
   const { userID } = userData;
   const surveyResponsesQuery = {
     name: 'survey-responses',
-    text: "SELECT s.id AS survey_id, s.survey_name, s.date_created AS survey_date, q.question_id, q.question_info, q.responses FROM surveys AS s LEFT JOIN ( SELECT q.id as question_id, q.survey_id, json_build_object('questionName', q.question_name, 'questionType', q.question_type, 'options', q.options) as question_info, json_agg(json_build_object('responseGroup', r.group_id, 'response', r.response, 'responseDate', r.date_response)) as responses FROM questions as q LEFT JOIN ( SELECT * FROM responses ) as r ON r.question_id = q.id GROUP BY q.id ) AS q ON s.id = q.survey_id WHERE s.id = $1 AND s.user_id = $2",
+    text: "SELECT s.id AS survey_id, s.user_id, s.survey_name, s.date_created AS survey_date, q.question_id, q.question_info, q.responses FROM surveys AS s LEFT JOIN ( SELECT q.id as question_id, q.survey_id, json_build_object('questionName', q.question_name, 'questionType', q.question_type, 'options', q.options) as question_info, json_agg(json_build_object('responseGroup', r.group_id, 'response', r.response, 'responseDate', r.date_response)) as responses FROM questions as q LEFT JOIN ( SELECT * FROM responses ) as r ON r.question_id = q.id GROUP BY q.id ) AS q ON s.id = q.survey_id WHERE s.id = $1 AND s.user_id = $2",
     values: [surveyID, userID]
   };
   client.query(surveyResponsesQuery, (err, data) => {
@@ -165,7 +195,13 @@ router.get('/results/:surveyID', checkAuth, (req, res, next) => {
       res.status(500);
       return next(err);
     }
-
+    if (data.rows[0].user_id !== parseInt(userID)) {
+      res.status(404);
+      return next({
+        type: 'Bad Creds',
+        message: 'Authenticated user does not match survey owner'
+      });
+    }
     const responses = data.rows;
     const answerCounts = responses.filter(r => r.question_info.questionType === 'mult-choice').map(r => {
       const { options, questionName } = r.question_info;

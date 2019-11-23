@@ -38,7 +38,9 @@ export default function ViewResults(props) {
       <SurveyPlot response={response}/>
       {response.responseCount ? (
         <>
+          <div>Multiple Choice Questions</div>
           <MultipleChoicePercentages responseCount={response.responseCount} answerCounts={response.answerCounts} />
+          <div>Free Response Questions</div>
           <FreeTextResponses responses={response.responses} />
         </>
       ) : (<div>No responses</div>)}
@@ -84,9 +86,6 @@ function FreeTextResponses(props) {
 
   return (
     <div>
-      <div>
-        Free Text Responses
-      </div>
       {renderArray}
     </div>
   );
@@ -119,7 +118,7 @@ function MultipleChoicePercentages(props) {
             </span>
             <PercentagesContainer>
               {Object.values(q.results).map((val, i) => {
-                const percent = ((val / responseCount) * 100).toFixed(2);
+                const percent = ((val / responseCount) * 100).toFixed(1);
                 const randomColor = '#' + (Math.random() * 0xFFFFFF << 0).toString(16);
                 return (
                   <div
@@ -140,7 +139,10 @@ function MultipleChoicePercentages(props) {
                 );
               })}
             </PercentagesContainer>
-            <span>
+            <span style={{
+              marginLeft: '40px',
+              paddingTop: '3px'
+            }}>
               {Object.values(q.results).map((val, i) => {
                 return (
                   <div key={i}>{val}</div>

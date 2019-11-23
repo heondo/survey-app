@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { makeStyles, Divider, Button, Modal } from '@material-ui/core';
+import { Divider, Button, Modal } from '@material-ui/core';
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
 import CancelOutlinedIcon from '@material-ui/icons/CancelOutlined';
 import styled from 'styled-components';
@@ -8,7 +8,28 @@ import moment from 'moment';
 export default function SurveyListItem(props) {
   const { survey, setSurveysLoaded } = props;
   const [modalOpen, setModalOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(survey.open);
   const [modalText, setModalText] = useState('');
+
+  const closeSurvey = () => {
+    const token = window.localStorage.getItem('token');
+    fetch(`/api/surveys/${survey.id}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      }
+    })
+      .then(res => res.json())
+      .then(res => {
+        if (res.error) {
+          throw new Error(res.error);
+        }
+        setIsOpen(false);
+        // console.log(res);
+      })
+      .catch(err => console.error(err));
+  };
 
   const getSurveyLink = () => {
     const str = `${survey.survey_name}_${survey.id}`;
@@ -23,6 +44,14 @@ export default function SurveyListItem(props) {
 
   return (
     <UserSurveyContainer>
+      {!isOpen ? (<div style={{
+        position: 'absolute',
+        width: '100%',
+        height: '100%',
+        backgroundColor: 'grey',
+        opacity: '.4',
+        borderRadius: '4px'
+      }} />) : null}
       <SurveyName>
         <span style={{ textDecoration: 'underline' }}>
           {survey.survey_name}
@@ -62,8 +91,8 @@ export default function SurveyListItem(props) {
       </ShareViewButtons>
       <Divider style={{ marginTop: '1rem' }}/>
       <EditDeleteButtons>
-        <EditOutlinedIcon />
-        <CancelOutlinedIcon />
+        {/* <EditOutlinedIcon /> */}
+        {isOpen ? <CancelOutlinedIcon onClick={closeSurvey} /> : null}
       </EditDeleteButtons>
       <Modal
         onClose={() => {

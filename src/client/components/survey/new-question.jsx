@@ -1,11 +1,11 @@
 import React from 'react';
-import { Formik, Form, Field, ErrorMessage, FieldArray, FastField } from 'formik';
+import { Field, ErrorMessage, FastField } from 'formik';
 import { Divider } from '@material-ui/core';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 import styled from 'styled-components';
 
 export default function NewQuestion(props) {
-  const { index, arrayHelpers, question, setFieldValue } = props;
+  const { index, arrayHelpers, question, setFieldValue, handleChange } = props;
 
   const resize = (arr, newSize) => {
     return [...arr, ...Array(Math.max(newSize - arr.length, 0)).fill('')];
@@ -29,7 +29,7 @@ export default function NewQuestion(props) {
         </DeleteButton>
         <RelDiv>
           <RadioSwitches>
-            <Field type="radio" name={`questions.${index}.questionType`} value="mult-choice" /> Multiple Choice
+            <Field type="radio" name={`questions.${index}.questionType`} value="mult-choice"/> Multiple Choice
             <Field type="radio" name={`questions.${index}.questionType`} value="free-text" /> Free Text
           </RadioSwitches>
           {
@@ -40,6 +40,11 @@ export default function NewQuestion(props) {
               </Label>
                 <FastField
                   type="number"
+                  onChange={e => {
+                    const newAnswerOptionsArray = resize(question.options.answerOptions, e.target.value);
+                    setFieldValue(`questions.${index}.options.answerOptions`, newAnswerOptionsArray);
+                    handleChange(e);
+                  }}
                   min="2"
                   max="6"
                   name={`questions.${index}.options.numOptions`}
