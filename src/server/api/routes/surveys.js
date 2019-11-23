@@ -161,7 +161,7 @@ router.get('/take/:id', (req, res, next) => {
 
 router.post('/take/:id', (req, res, next) => {
   const { id } = req.params;
-  const { questionID, answers } = req.body;
+  const { answers } = req.body;
   const rollBackQuery = createError => {
     client.query('ROLLBACK', err => {
       if (err) {
