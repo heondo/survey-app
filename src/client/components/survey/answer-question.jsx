@@ -14,6 +14,9 @@ export default function AnswerQuestion(props) {
       <div>
         <FreeInput
           component="textarea"
+          style={{
+            borderRadius: '3px'
+          }}
           placeholder="Your response"
           name={`questions.${index}`}
           rows="3"

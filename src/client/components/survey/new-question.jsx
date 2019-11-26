@@ -38,12 +38,17 @@ export default function NewQuestion(props) {
               <Label>
                 Number of Options (2 - 6)
               </Label>
-                <FastField
+                <Field
                   type="number"
                   onChange={e => {
                     const newAnswerOptionsArray = resize(question.options.answerOptions, e.target.value);
                     setFieldValue(`questions.${index}.options.answerOptions`, newAnswerOptionsArray);
                     handleChange(e);
+                  }}
+                  style={{
+                    width: '25px',
+                    borderRadius: '3px',
+                    textAlign: 'center'
                   }}
                   min="2"
                   max="6"
@@ -89,6 +94,7 @@ export default function NewQuestion(props) {
 const MultChoiceField = styled(FastField)`
   max-width: 350px;
   width: 100%;
+  border-radius: 3px;
 `;
 
 const QuestionContainer = styled.div`

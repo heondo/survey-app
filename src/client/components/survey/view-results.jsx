@@ -31,10 +31,10 @@ export default function ViewResults(props) {
   };
 
   return response ? (
-    <Container>
-      <h4>{response.responses[0].survey_name}</h4>
+    <Container style={{ padding: '.5rem' }}>
+      <div style={{ fontSize: '1.5rem', marginTop: '.5rem' }}>{response.responses[0].survey_name}</div>
       <div>Created {moment(response.responses[0].survey_date).calendar()}</div>
-      <div>With {response.responseCount} responses so far</div>
+      <div>With <strong style={{ textDecoration: 'underline', color: 'darkblue', fontSize: '1rem' }}>{response.responseCount}</strong> responses so far</div>
       <SurveyPlot response={response}/>
       {response.responseCount ? (
         <>
@@ -53,7 +53,7 @@ export default function ViewResults(props) {
 
 const FreeResponsesScroll = styled.div`
   overflow-y: scroll;
-  max-height: 200px;
+  max-height: 150px;
 `;
 
 function FreeTextResponses(props) {
@@ -157,7 +157,7 @@ function MultipleChoicePercentages(props) {
   };
 
   return (
-    <div>
+    <div style={{ marginBottom: '.5rem' }}>
       {renderArrays}
     </div>
   );

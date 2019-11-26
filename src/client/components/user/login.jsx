@@ -17,8 +17,9 @@ const TitleText = styled.h1``;
 
 const TitleSubText = styled.p``;
 
-const GetStartedText = styled.h3`
-  margin-top: 2rem;
+const GetStartedText = styled.div`
+  font-size: 1rem;
+  margin-top: 1rem;
 `;
 
 const InputField = styled(Field)`

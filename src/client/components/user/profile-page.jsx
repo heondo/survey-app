@@ -39,7 +39,7 @@ export default function ProfilePage(props) {
     <Container>
       {surveysLoaded ? (
         <>
-          <Div>
+          <HeaderContainer>
             <Header>
               Surveys
             </Header>
@@ -48,7 +48,7 @@ export default function ProfilePage(props) {
                 NEW SURVEY +
               </AddSurveyText>
             </BlackLink>
-          </Div>
+          </HeaderContainer>
           <Div>
             {(surveys.length) ? (
               // TODO display surveys list
@@ -79,6 +79,11 @@ const BlackLink = styled(Link)`
   text-decoration: none;
 `;
 
+const HeaderContainer = styled.div`
+  position: relative;
+  padding-top: 1rem;
+`;
+
 const Div = styled(Box)`
   position: relative;
   padding: .5rem;
@@ -105,5 +110,5 @@ const AddSurveyText = styled.div`
   position: absolute;
   font-size: 1.5rem;
   right: 1rem;
-  top: 1.5rem;
+  top: 2rem;
 `;
