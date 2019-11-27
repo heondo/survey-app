@@ -91,6 +91,7 @@ export default function SignUp(props) {
               </RelDiv>
               <RelDiv>
                 <FullInput
+                  type="password"
                   name='password'
                   placeholder='Password'
                 />
@@ -99,6 +100,7 @@ export default function SignUp(props) {
               </RelDiv>
               <RelDiv>
                 <FullInput
+                  type="password"
                   name='confirmPassword'
                   placeholder='Confirm Password'
                 />

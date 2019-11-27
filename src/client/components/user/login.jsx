@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Container, Button } from '@material-ui/core';
 import { Link } from 'react-router-dom';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
@@ -29,6 +29,13 @@ const InputField = styled(Field)`
 `;
 
 const ErrorLabel = styled(ErrorMessage)`
+  font-size: .8rem;
+  position: absolute;
+  margin-top: 3px;
+  color: red;
+`;
+
+const FailedLogin = styled.div`
   font-size: .8rem;
   position: absolute;
   margin-top: 3px;
@@ -73,6 +80,7 @@ const validationSchema = yup.object().shape({
 
 export default function Login(props) {
   const { setUserInfo } = props;
+  const [loginFailed, setLoginFailed] = useState(false);
 
   const handleLogin = values => {
     // send someting to the backend
@@ -84,6 +92,9 @@ export default function Login(props) {
       .then(res => res.json())
       .then(res => {
         if (res.error) {
+          if (res.error === 'Authorization Failed') {
+            setLoginFailed(true);
+          }
           throw new Error(res.error);
         }
         window.localStorage.setItem('token', res.token);
@@ -137,6 +148,11 @@ export default function Login(props) {
                 value={props.values.password}
               />
               <ErrorLabel name="password" component="div" />
+              {loginFailed ? (
+                <FailedLogin>
+                Failed Login
+                </FailedLogin>
+              ) : undefined}
             </ErrorInputContainer>
             <LoginButtonContainer>
               <LoginButton type="submit" variant="contained">
