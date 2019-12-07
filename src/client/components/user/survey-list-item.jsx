@@ -92,16 +92,17 @@ export default function SurveyListItem(props) {
         <ShareViewButtons>
           <Button variant="contained" style={{ marginRight: '.5rem' }}
             onClick={
-            // getSurveyLink
               () => {
                 setSurveysLoaded(false);
                 const str = `${survey.survey_name}_${survey.id}`;
                 const b64URL = window.btoa(str);
                 props.history.push(`/surveys/take?identifier=${b64URL}`);
-              }
-            }
-          >
-          Share
+              }}>
+            Take (for demo purposes)
+          </Button>
+          <Button variant="contained" style={{ marginRight: '.5rem' }}
+            onClick={getSurveyLink}>
+              Share
           </Button>
           <Button
             variant="contained"
@@ -109,7 +110,7 @@ export default function SurveyListItem(props) {
               goToResults
             }
           >
-      View Results
+            View Results
           </Button>
         </ShareViewButtons>
         <Divider style={{ marginTop: '1rem' }}/>

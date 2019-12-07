@@ -146,6 +146,10 @@ export default function Login(props) {
                 placeholder="*********"
                 name="password"
                 value={props.values.password}
+                onChange={e => {
+                  setLoginFailed(false);
+                  props.handleChange(e);
+                }}
               />
               <ErrorLabel name="password" component="div" />
               {loginFailed ? (
