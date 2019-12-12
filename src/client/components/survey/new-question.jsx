@@ -55,7 +55,6 @@ export default function NewQuestion(props) {
                   onChange={e => {
                     const newSize = e.target.value;
                     const newAnswerOptionsArray = resize(question.options.answerOptions, newSize);
-                    console.log(newAnswerOptionsArray);
                     setFieldValue(`questions.${index}.options.answerOptions`, newAnswerOptionsArray);
                     handleChange(e);
                   }}
