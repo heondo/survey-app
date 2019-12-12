@@ -17,4 +17,8 @@ Viewing survey results are authenticated by users using jsonweb token. Surveys b
 * JSONWebToken
 * Material-UI things like navbars etc but the rest will be core CSS3
 
-![Creating and taking a survey](/demo/create-take-survey.gif)
+#### Creating a survey
+![Creating and taking a survey](/demo/create-survey.gif)
+
+#### And then viewing the results...
+![Taking and viewing the survey results](/demo/take-survey.gif)
