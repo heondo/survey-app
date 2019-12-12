@@ -107,7 +107,7 @@ router.post('/', checkAuth, (req, res, next) => {
         questionsValues.push(surveyID, q.questionName, q.questionType, q.options);
       });
       const createQuestionsQuery = {
-        name: 'create-questions',
+        name: `create-questions-${Date.now()}`,
         text: questionsQuery,
         values: questionsValues
       };
