@@ -8,14 +8,18 @@ export default function NewQuestion(props) {
   const { index, arrayHelpers, question, setFieldValue, handleChange } = props;
 
   const resize = (arr, newSize) => {
-    if (parseInt(newSize) > 6 || parseInt(newSize) < 2) {
+    const intValue = parseInt(newSize);
+    if (!intValue) {
+      return arr;
+    }
+    if (intValue > 6 || intValue < 2) {
       return arr;
     }
     const newArr = [...arr];
-    while (newSize > newArr.length) {
+    while (intValue > newArr.length) {
       newArr.push('');
     }
-    newArr.length = newSize;
+    newArr.length = intValue;
     return newArr;
   };
 
