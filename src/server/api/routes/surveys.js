@@ -90,7 +90,7 @@ router.post('/', checkAuth, (req, res, next) => {
       return next(err);
     }
     const createSurveyQuery = {
-      name: `create-survey-${userID}`,
+      name: `create-survey-${Date.now()}`,
       text: 'INSERT INTO surveys(survey_name, user_id, date_created) VALUES($1, $2, now()) RETURNING id',
       values: [surveyName, userID]
     };
