@@ -8,7 +8,15 @@ export default function NewQuestion(props) {
   const { index, arrayHelpers, question, setFieldValue, handleChange } = props;
 
   const resize = (arr, newSize) => {
-    return [...arr, ...Array(Math.max(newSize - arr.length, 0)).fill('')];
+    if (newSize > 6 || newSize < 2) {
+      return arr;
+    }
+    const newArr = [...arr];
+    while (newSize > newArr.length) {
+      newArr.push('');
+    }
+    newArr.length = newSize;
+    return newArr;
   };
 
   return (
@@ -41,7 +49,9 @@ export default function NewQuestion(props) {
                 <Field
                   type="number"
                   onChange={e => {
-                    const newAnswerOptionsArray = resize(question.options.answerOptions, e.target.value);
+                    const newSize = e.target.value;
+                    const newAnswerOptionsArray = resize(question.options.answerOptions, newSize);
+                    console.log(newAnswerOptionsArray);
                     setFieldValue(`questions.${index}.options.answerOptions`, newAnswerOptionsArray);
                     handleChange(e);
                   }}
