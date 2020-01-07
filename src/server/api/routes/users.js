@@ -87,7 +87,7 @@ router.post('/signup', (req, res, next) => {
         userID: data.rows[0].id
       }, process.env.JWT_KEY,
       {
-        expiresIn: '24h'
+        expiresIn: '7d'
       });
       res.status(201).json({
         success: true,

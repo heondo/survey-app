@@ -120,8 +120,8 @@ export default function Login(props) {
       </HeaderContainer>
       <Formik
         initialValues={{
-          email: '',
-          password: ''
+          email: 'heondokim+1@gmail.com',
+          password: '11111111'
         }}
         onSubmit={handleLogin}
         validationSchema={validationSchema}
