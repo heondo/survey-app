@@ -21,7 +21,7 @@ Fortunately the basic functionality is there, the survey creation forms are all 
 #### Tools
 * React
 * NodeJS
-* Postgres
+* PostgreSQL
 * Formik
 * JSONWebToken
 * Material-UI things like navbars etc but the rest will be core CSS3
